@@ -11,6 +11,8 @@ export const TextFieldGroup = ({
   type,
   onChange,
   disabled,
+  onFocus,
+  onBlur,
 }) => {
   return (
     <div className="form-group">
@@ -21,6 +23,8 @@ export const TextFieldGroup = ({
         name={name}
         value={value}
         onChange={onChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
         disabled={disabled}
       />
       {info && <small className="form-text text-muted">{info}</small>}
@@ -37,6 +41,8 @@ TextFieldGroup.propTypes = {
   error: PropTypes.string,
   type: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
   disabled: PropTypes.string,
 };
 

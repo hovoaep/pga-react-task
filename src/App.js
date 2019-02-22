@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Main } from "./screens/Main";
-// import { BoziTxa } from "./components/BoziTxa";
+import { Main } from "screens";
 import "./App.scss";
 
 class App extends Component {
@@ -8,7 +7,6 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header" />
-        {/* <BoziTxa /> */}
         <Main />
       </div>
     );
