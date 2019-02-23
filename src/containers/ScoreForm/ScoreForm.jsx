@@ -135,7 +135,7 @@ export class ScoreForm extends Component {
         fields: { name, surname, score },
         errors,
       },
-      props: { initialValues, edit },
+      props: { edit },
     } = this;
     return (
       <div>

@@ -6,7 +6,7 @@ import UpIcon from "../../up.svg";
 
 export class ScoreTabel extends Component {
   state = {
-    up: false,
+    up: true,
   };
 
   changeSortOption = () => {
