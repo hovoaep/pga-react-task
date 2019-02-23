@@ -1,0 +1,8 @@
+.up-icon {
+  width: 20px;
+  transform: rotateZ(90deg);
+  height: 20px;
+  &.active {
+    transform: rotateZ(-90deg);
+  }
+}
