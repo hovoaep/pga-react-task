@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { TextFieldGroup, Button } from "components";
 import { scoreFormValidation, LocaleStorageUtils } from "utils";
+import { LSKey } from "_constants";
+import "./ScoreForm.scss";
 
 export class ScoreForm extends Component {
   state = {
@@ -8,11 +10,22 @@ export class ScoreForm extends Component {
       name: "",
       surname: "",
       score: "",
+      id: "",
     },
     errors: {},
     touched: {},
   };
-
+  static getDerivedStateFromProps(props, state) {
+    if (
+      Object.keys(props.initialValues).length &&
+      state.fields.id !== props.initialValues.id
+    ) {
+      return {
+        fields: props.initialValues,
+      };
+    }
+    return null;
+  }
   onChange = e => {
     const {
       target: { name, value },
@@ -40,6 +53,22 @@ export class ScoreForm extends Component {
     }
   };
 
+  resetForm = () => {
+    const {
+      state: { fields },
+      props: { edit, clearInitialValues },
+    } = this;
+    if (edit) {
+      clearInitialValues();
+    }
+    Object.keys(fields).forEach(field =>
+      this.setState(({ fields, touched }) => ({
+        fields: { ...fields, [field]: "" },
+        touched: { ...touched, [field]: false },
+      }))
+    );
+  };
+
   touchAllFields = () => {
     const {
       state: { fields },
@@ -62,7 +91,9 @@ export class ScoreForm extends Component {
     const {
       touchAllFields,
       validateForm,
+      resetForm,
       state: { errors, fields },
+      props: { updateScoreData, edit },
     } = this;
     const { LSget, LSupdate } = LocaleStorageUtils;
     touchAllFields();
@@ -70,12 +101,27 @@ export class ScoreForm extends Component {
     if (Object.keys(errors).length !== 0) {
       return false;
     }
-    fields.id = Date.now();
-    // console.log(LSget("scoreboard"));
-    // const data = LSget("scoreboard")
-    //   ? JSON.parse(LSget("scoreboard")).push(fields)
-    //   : [fields];
-    // LSupdate("scoreboard", JSON.stringify(data));
+    if (!edit) {
+      fields.id = Date.now();
+    }
+    let scoreBoardData = LSget(LSKey);
+    if (scoreBoardData) {
+      if (edit) {
+        scoreBoardData = JSON.parse(scoreBoardData).map(score => {
+          if (score.id === fields.id) {
+            return fields;
+          }
+          return score;
+        });
+      } else {
+        scoreBoardData = [...JSON.parse(scoreBoardData), fields];
+      }
+    } else {
+      scoreBoardData = [fields];
+    }
+    LSupdate(LSKey, JSON.stringify(scoreBoardData));
+    updateScoreData(fields);
+    resetForm();
   };
 
   render() {
@@ -83,17 +129,21 @@ export class ScoreForm extends Component {
       onChange,
       onFocus,
       onSubmit,
+      resetForm,
       validateForm,
       state: {
         fields: { name, surname, score },
         errors,
       },
+      props: { initialValues, edit },
     } = this;
     return (
       <div>
+        <h2 className="text-center mb-4">Add new player</h2>
         <form onSubmit={onSubmit}>
           <TextFieldGroup
             name="name"
+            placeholder="Name"
             value={name}
             onChange={onChange}
             error={errors.name}
@@ -102,6 +152,7 @@ export class ScoreForm extends Component {
           />
           <TextFieldGroup
             name="surname"
+            placeholder="Surname"
             value={surname}
             onChange={onChange}
             error={errors.surname}
@@ -111,13 +162,26 @@ export class ScoreForm extends Component {
           <TextFieldGroup
             name="score"
             type="number"
+            placeholder="Score"
             value={score}
             onChange={onChange}
             error={errors.score}
             onFocus={onFocus}
             onBlur={validateForm}
           />
-          <Button buttonType="submit" text="Add new score" />
+          <div className="form-actions">
+            <Button
+              buttonType="button"
+              type="secondary"
+              text="Reset form"
+              onClick={resetForm}
+            />
+            <Button
+              buttonType="submit"
+              type="success"
+              text={edit ? "Edit score" : "Add new score"}
+            />
+          </div>
         </form>
       </div>
     );

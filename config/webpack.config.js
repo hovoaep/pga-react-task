@@ -268,6 +268,7 @@ module.exports = function(webpackEnv) {
         containers: path.resolve(__dirname, "../src/containers"),
         screens: path.resolve(__dirname, "../src/screens"),
         utils: path.resolve(__dirname, "../src/utils"),
+        _constants: path.resolve(__dirname, "../src/_constants"),
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
